@@ -476,6 +476,7 @@ void setup()
   #if defined(CONTROLLERFAN_PIN) && CONTROLLERFAN_PIN > -1
     SET_OUTPUT(CONTROLLERFAN_PIN); //Set pin used for driver cooling fan
   #endif
+  pinMode(HOTEND_COOLING, OUTPUT);
 }
 
 
@@ -1354,6 +1355,18 @@ static void process_command()
       break;
     case 140: // M140 set bed temp
       if (code_seen('S')) setTargetBed(code_value());
+      break;
+    case 858:
+        if (code_seen('S')) {
+          if (code_value_long() == 1) {
+            SERIAL_PROTOCOLPGM("Enable Hotend cooling ");
+            digitalWrite(HOTEND_COOLING, HIGH);
+          } else {
+            digitalWrite(HOTEND_COOLING, LOW);
+            SERIAL_PROTOCOLPGM("Disable Hotend cooling ");
+          }
+        }
+        
       break;
     case 105 : // M105 - Read current temp
       if(setTargetedHotend(105)){
